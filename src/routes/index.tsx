@@ -1,10 +1,10 @@
-import { createFileRoute, useServerFn } from "@tanstack/react-start";
-import { createFileRoute as _crf } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { generateStoryboard, type Storyboard } from "@/lib/storyboard.functions";
 import { StoryboardPanel } from "@/components/StoryboardPanel";
 
-export const Route = _crf("/")({
+export const Route = createFileRoute("/")({
   component: Home,
 });
 
