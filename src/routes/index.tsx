@@ -262,5 +262,3 @@ function EmptyState() {
   );
 }
 
-// Suppress unused import warning (Route export used by TanStack file router)
-void createFileRoute;
