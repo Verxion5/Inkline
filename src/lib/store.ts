@@ -32,7 +32,8 @@ function hydrate() {
     const raw = window.localStorage.getItem(KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as DB;
-      if (parsed && Array.isArray(parsed.projects)) state = { onboarded: false, ...parsed };
+      if (parsed && Array.isArray(parsed.projects))
+        state = { projects: parsed.projects, onboarded: parsed.onboarded ?? false };
     }
   } catch {
     /* corrupt payload — start clean */
