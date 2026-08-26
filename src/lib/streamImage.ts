@@ -1,9 +1,6 @@
-import { flushSync } from "react-dom";
-
 /**
- * Stream image generation from a server route that proxies Lovable AI.
- * Calls onFrame with data URLs as partial frames arrive; onFrame(url, true)
- * fires for the final full-resolution frame.
+ * Stream image generation from the /api/generate-image server route.
+ * onFrame receives data URLs; the last call has isFinal=true.
  */
 export async function streamImage(
   endpoint: string,
@@ -17,42 +14,75 @@ export async function streamImage(
   });
 
   if (!res.ok || !res.body) {
-    throw new Error(`Image generation failed: ${res.status} ${await res.text()}`);
+    throw new Error(`Image generation failed (${res.status}): ${(await res.text().catch(() => "")).slice(0, 200)}`);
   }
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
-  let lastUrl: string | null = null;
+  let sawAny = false;
+  let sawFinal = false;
+  let streamError: string | null = null;
+  let currentEvent = "";
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
+  const handle = (eventName: string, payloadRaw: string) => {
+    if (!payloadRaw || payloadRaw === "[DONE]") return;
+    let evt: Record<string, unknown>;
+    try {
+      evt = JSON.parse(payloadRaw);
+    } catch {
+      return;
+    }
+    const type = (evt["type"] as string) ?? eventName;
+    if (type === "error" || eventName === "error") {
+      sawAny = true;
+      const err = evt["error"] as { message?: string } | undefined;
+      streamError = err?.message ?? "Image generation failed.";
+      return;
+    }
+    const b64 = evt["b64_json"] as string | undefined;
+    if (typeof b64 === "string") {
+      sawAny = true;
+      const final = type.endsWith(".completed");
+      if (final) sawFinal = true;
+      onFrame(`data:image/png;base64,${b64}`, final);
+    }
+  };
 
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
-
-    for (const line of lines) {
-      if (!line.startsWith("data:")) continue;
-      const payload = line.slice(5).trim();
-      if (!payload || payload === "[DONE]") continue;
-      try {
-        const evt = JSON.parse(payload);
-        const delta = evt?.choices?.[0]?.delta;
-        const imgs = delta?.images;
-        if (Array.isArray(imgs) && imgs.length > 0) {
-          const url = imgs[0]?.image_url?.url;
-          if (typeof url === "string") {
-            lastUrl = url;
-            flushSync(() => onFrame(url, false));
-          }
-        }
-      } catch {
-        // ignore malformed frames
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const rawLine of lines) {
+        const line = rawLine.replace(/\r$/, "");
+        if (line.startsWith("event:")) currentEvent = line.slice(6).trim();
+        else if (line.startsWith("data:")) handle(currentEvent, line.slice(5).trim());
+        else if (line === "") currentEvent = "";
       }
     }
+  } finally {
+    reader.cancel().catch(() => {});
   }
 
-  if (lastUrl) onFrame(lastUrl, true);
+  if (streamError) throw new Error(streamError);
+
+  if (!sawAny) {
+    // Zero events: transport hiccup. Replay once, non-streamed.
+    const replay = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt, stream: false }),
+    });
+    if (!replay.ok) throw new Error(`Image generation failed (${replay.status}).`);
+    const json = (await replay.json()) as { data?: { b64_json?: string }[] };
+    const b64 = json.data?.[0]?.b64_json;
+    if (!b64) throw new Error("Image generation returned no image.");
+    onFrame(`data:image/png;base64,${b64}`, true);
+    return;
+  }
+
+  if (!sawFinal) throw new Error("Image stream ended early — try regenerating this panel.");
 }
