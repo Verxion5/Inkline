@@ -1,20 +1,29 @@
 /**
  * Stream image generation from the /api/generate-image server route.
+ * `body` is the full request body (prompt, negative, aspect, format, quality).
  * onFrame receives data URLs; the last call has isFinal=true.
  */
+export type ImageRequestBody = {
+  prompt: string;
+  negative: string[];
+  aspect: string;
+  format: string;
+  quality: string;
+};
+
 export async function streamImage(
   endpoint: string,
-  prompt: string,
+  body: ImageRequestBody,
   onFrame: (dataUrl: string, isFinal: boolean) => void,
 ): Promise<void> {
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt }),
+    body: JSON.stringify({ ...body, stream: true }),
   });
 
   if (!res.ok || !res.body) {
-    throw new Error(`Image generation failed (${res.status}): ${(await res.text().catch(() => "")).slice(0, 200)}`);
+    throw new Error((await res.text().catch(() => "")).slice(0, 240) || `Image generation failed (${res.status}).`);
   }
 
   const reader = res.body.getReader();
@@ -74,9 +83,9 @@ export async function streamImage(
     const replay = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, stream: false }),
+      body: JSON.stringify({ ...body, stream: false }),
     });
-    if (!replay.ok) throw new Error(`Image generation failed (${replay.status}).`);
+    if (!replay.ok) throw new Error((await replay.text().catch(() => "")).slice(0, 240) || "Image generation failed.");
     const json = (await replay.json()) as { data?: { b64_json?: string }[] };
     const b64 = json.data?.[0]?.b64_json;
     if (!b64) throw new Error("Image generation returned no image.");
@@ -84,5 +93,5 @@ export async function streamImage(
     return;
   }
 
-  if (!sawFinal) throw new Error("Image stream ended early — try regenerating this panel.");
+  if (!sawFinal) throw new Error("Image stream ended early — redraw this panel.");
 }
