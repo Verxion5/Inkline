@@ -12,8 +12,15 @@ export function hasKey(): boolean {
   return Boolean(process.env["LOVABLE_API_KEY"]);
 }
 
-/** Calls the gateway and returns parsed JSON content. */
-export async function chatJSON<T>(system: string, user: string, model = "google/gemini-3.7-flash"): Promise<T> {
+/** Multimodal content part for chat completions (text or image). */
+export type ContentPart = { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
+
+/** Calls the gateway and returns parsed JSON content. `user` may be plain text or multimodal parts. */
+export async function chatJSON<T>(
+  system: string,
+  user: string | ContentPart[],
+  model = "google/gemini-3.7-flash",
+): Promise<T> {
   const key = process.env["LOVABLE_API_KEY"];
   if (!key) throw new AIError("AI is not configured for this workspace (missing API key).", 401);
 
