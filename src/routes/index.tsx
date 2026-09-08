@@ -3,7 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { generateStoryboard, type Storyboard } from "@/lib/storyboard.functions";
 import { StoryboardPanel } from "@/components/StoryboardPanel";
-import { applyPreset, defaultSettings, presetsFor, type ArtSettings, type Format } from "@/lib/artDirection";
+import { defaultSettings, type ArtSettings } from "@/lib/artDirection";
+import { ArtInspector } from "@/components/ArtInspector";
 
 export const Route = createFileRoute("/")({
   component: Home,
