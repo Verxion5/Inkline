@@ -219,9 +219,9 @@ function Home() {
               </button>
             </div>
 
-            <div className="grid gap-10 md:grid-cols-2">
+            <div className={settings.format === "manga" ? "grid gap-10 md:grid-cols-2" : "mx-auto grid max-w-md gap-4"}>
               {board.panels.map((p) => (
-                <StoryboardPanel key={p.index} panel={p} stylePrompt={STYLE_PROMPT} />
+                <StoryboardPanel key={p.index} panel={p} board={board} settings={settings} />
               ))}
             </div>
           </div>
