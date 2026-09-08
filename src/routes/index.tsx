@@ -3,13 +3,13 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { generateStoryboard, type Storyboard } from "@/lib/storyboard.functions";
 import { StoryboardPanel } from "@/components/StoryboardPanel";
+import { defaultSettings, type ArtSettings } from "@/lib/artDirection";
+import { ArtInspector } from "@/components/ArtInspector";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const STYLE_PROMPT =
-  "Original monochrome manga/manhwa panel. High-contrast ink linework, cinematic composition, dramatic chiaroscuro lighting, screentone shading, sharp inked shadows, expressive character design in an invented studio style — not imitating any real artist. Cinematic 4:3 frame.";
 
 const EXAMPLES = [
   "A courier girl smuggles a caged spirit through a neon-drowned floating city as the sky splits open.",
@@ -23,6 +23,7 @@ function Home() {
   const [board, setBoard] = useState<Storyboard | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [settings, setSettings] = useState<ArtSettings>(() => defaultSettings("manga"));
 
   const planFn = useServerFn(generateStoryboard);
 
@@ -219,9 +220,9 @@ function Home() {
               </button>
             </div>
 
-            <div className="grid gap-10 md:grid-cols-2">
+            <div className={settings.format === "manga" ? "grid gap-10 md:grid-cols-2" : "mx-auto grid max-w-md gap-4"}>
               {board.panels.map((p) => (
-                <StoryboardPanel key={p.index} panel={p} stylePrompt={STYLE_PROMPT} />
+                <StoryboardPanel key={p.index} panel={p} board={board} settings={settings} />
               ))}
             </div>
           </div>
