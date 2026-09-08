@@ -3,13 +3,12 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { generateStoryboard, type Storyboard } from "@/lib/storyboard.functions";
 import { StoryboardPanel } from "@/components/StoryboardPanel";
+import { applyPreset, defaultSettings, presetsFor, type ArtSettings, type Format } from "@/lib/artDirection";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const STYLE_PROMPT =
-  "Original monochrome manga/manhwa panel. High-contrast ink linework, cinematic composition, dramatic chiaroscuro lighting, screentone shading, sharp inked shadows, expressive character design in an invented studio style — not imitating any real artist. Cinematic 4:3 frame.";
 
 const EXAMPLES = [
   "A courier girl smuggles a caged spirit through a neon-drowned floating city as the sky splits open.",
