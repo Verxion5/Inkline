@@ -159,9 +159,7 @@ export function ArtInspector({ settings, onChange, compact = false }: Props) {
 
       <div className="flex items-end gap-3">
         <label className="flex-1">
-          <span={undefined} className={label}>
-            Quality
-          </span>
+          <span className={label}>Quality</span>
           <select
             className={select}
             value={settings.quality}
