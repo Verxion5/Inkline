@@ -22,6 +22,7 @@ function Home() {
   const [board, setBoard] = useState<Storyboard | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [settings, setSettings] = useState<ArtSettings>(() => defaultSettings("manga"));
 
   const planFn = useServerFn(generateStoryboard);
 
