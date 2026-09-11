@@ -4,15 +4,39 @@ import { newProject } from "./factories";
 
 const KEY = "inkline.v1";
 
-const EMPTY: DB = { projects: [], onboarded: false };
+const EMPTY: DB = { projects: [], onboarded: false, currentId: null };
 
 let state: DB = EMPTY;
 let snapshot: DB = EMPTY;
 let hydrated = false;
 const listeners = new Set<() => void>();
 
+export type SaveStatus = "idle" | "saving" | "saved";
+let saveStatus: SaveStatus = "idle";
+const saveListeners = new Set<() => void>();
+let saveTimer: ReturnType<typeof setTimeout> | undefined;
+
+function setSaveStatus(s: SaveStatus) {
+  saveStatus = s;
+  saveListeners.forEach((l) => l());
+}
+
+export function useSaveStatus(): SaveStatus {
+  return useSyncExternalStore(
+    (cb) => {
+      saveListeners.add(cb);
+      return () => saveListeners.delete(cb);
+    },
+    () => saveStatus,
+    () => "idle" as SaveStatus,
+  );
+}
+
 function persist() {
   if (typeof window === "undefined") return;
+  setSaveStatus("saving");
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => setSaveStatus("saved"), 420);
   try {
     window.localStorage.setItem(KEY, JSON.stringify(state));
   } catch {
@@ -33,7 +57,11 @@ function hydrate() {
     if (raw) {
       const parsed = JSON.parse(raw) as DB;
       if (parsed && Array.isArray(parsed.projects))
-        state = { projects: parsed.projects, onboarded: parsed.onboarded ?? false };
+        state = {
+          projects: parsed.projects,
+          onboarded: parsed.onboarded ?? false,
+          currentId: parsed.currentId ?? parsed.projects[0]?.id ?? null,
+        };
     }
   } catch {
     /* corrupt payload — start clean */
@@ -158,12 +186,24 @@ export function useProjectActions(id: ID) {
 
 export function createProject(partial: Partial<Project> = {}): Project {
   const project = newProject(partial);
-  setDB((db) => ({ ...db, projects: [project, ...db.projects] }));
+  setDB((db) => ({ ...db, projects: [project, ...db.projects], currentId: project.id }));
   return project;
 }
 
 export function deleteProject(id: ID) {
-  setDB((db) => ({ ...db, projects: db.projects.filter((p) => p.id !== id) }));
+  setDB((db) => {
+    const projects = db.projects.filter((p) => p.id !== id);
+    return { ...db, projects, currentId: db.currentId === id ? (projects[0]?.id ?? null) : db.currentId };
+  });
+}
+
+export function setCurrentProject(id: ID | null) {
+  setDB((db) => ({ ...db, currentId: id }));
+}
+
+export function useCurrentProject(): Project | undefined {
+  const db = useDB();
+  return db.projects.find((p) => p.id === db.currentId) ?? db.projects[0];
 }
 
 export function markOnboarded() {

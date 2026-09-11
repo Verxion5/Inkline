@@ -122,4 +122,4 @@ export type Project = {
   updatedAt: number;
 };
 
-export type DB = { projects: Project[]; onboarded: boolean };
+export type DB = { projects: Project[]; onboarded: boolean; currentId: ID | null };
