@@ -240,3 +240,83 @@ Respond with JSON only: {"dialogue":[{"speaker":string,"text":string,"kind":"spe
       throw new Error(toMessage(e));
     }
   });
+
+/* ------------------------------------------------------------------ */
+/* Structured entity extraction                                        */
+/* ------------------------------------------------------------------ */
+
+const CharacterOut = z.object({
+  name: z.string().default(""),
+  age: z.string().default(""),
+  role: z.string().default(""),
+  appearance: z.string().default(""),
+  personality: z.string().default(""),
+  outfit: z.string().default(""),
+  expressions: z.array(z.string()).default([]),
+  poses: z.array(z.string()).default([]),
+  items: z.array(z.string()).default([]),
+  powers: z.array(z.string()).default([]),
+  relationships: z.array(z.object({ name: z.string(), relation: z.string() })).default([]),
+  notes: z.string().default(""),
+});
+export type CharacterResult = z.infer<typeof CharacterOut>;
+
+export const generateCharacter = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ description: z.string().min(3).max(4000), context: z.string().max(8000).default("") }).parse(d),
+  )
+  .handler(async ({ data }): Promise<CharacterResult> => {
+    try {
+      const raw = await chatJSON<unknown>(
+        `You are the Character Designer agent of Inkline. Turn a plain-language description into a canonical character sheet.
+Appearance must be a precise, reusable visual description (face shape, hair, eyes, build, height, skin, distinguishing marks) that an artist can redraw identically every time.
+${ORIGINALITY_RULE}
+Respond with JSON only.`,
+        `Project context: ${data.context || "none"}
+
+Description: ${data.description}
+
+JSON shape:
+{"name":string,"age":string,"role":string,"appearance":string,"personality":string,"outfit":string,"expressions":string[],"poses":string[],"items":string[],"powers":string[],"relationships":[{"name":string,"relation":string}],"notes":string}`,
+      );
+      return CharacterOut.parse(raw);
+    } catch (e) {
+      throw new Error(toMessage(e));
+    }
+  });
+
+const LocationOut = z.object({
+  name: z.string().default(""),
+  description: z.string().default(""),
+  architecture: z.string().default(""),
+  atmosphere: z.string().default(""),
+  geography: z.string().default(""),
+  lighting: z.string().default(""),
+  weather: z.string().default(""),
+  objects: z.array(z.string()).default([]),
+  notes: z.string().default(""),
+});
+export type LocationResult = z.infer<typeof LocationOut>;
+
+export const generateLocation = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ description: z.string().min(3).max(4000), context: z.string().max(8000).default("") }).parse(d),
+  )
+  .handler(async ({ data }): Promise<LocationResult> => {
+    try {
+      const raw = await chatJSON<unknown>(
+        `You are the World Architect agent of Inkline. Turn a plain-language description into a canonical location sheet an artist can redraw consistently.
+${ORIGINALITY_RULE}
+Respond with JSON only.`,
+        `Project context: ${data.context || "none"}
+
+Description: ${data.description}
+
+JSON shape:
+{"name":string,"description":string,"architecture":string,"atmosphere":string,"geography":string,"lighting":string,"weather":string,"objects":string[],"notes":string}`,
+      );
+      return LocationOut.parse(raw);
+    } catch (e) {
+      throw new Error(toMessage(e));
+    }
+  });
