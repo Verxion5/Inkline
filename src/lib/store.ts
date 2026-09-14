@@ -32,16 +32,89 @@ export function useSaveStatus(): SaveStatus {
   );
 }
 
-function persist() {
+/* ---------------- cloud sync ---------------- */
+
+let syncUserId: string | null = null;
+let syncError: string | null = null;
+const dirty = new Set<ID>();
+let pushTimer: ReturnType<typeof setTimeout> | undefined;
+
+export function getSyncError() {
+  return syncError;
+}
+
+/** Called by the auth hook. Pulls the user's cloud projects and starts pushing changes. */
+export function setSyncUser(id: string | null) {
+  if (syncUserId === id) return;
+  syncUserId = id;
+  if (!id) return;
+  hydrate();
+  void (async () => {
+    try {
+      const { fetchRemoteProjects } = await import("./cloud");
+      const remote = await fetchRemoteProjects();
+      syncError = null;
+      const byId = new Map(state.projects.map((p) => [p.id, p]));
+      for (const r of remote) {
+        const local = byId.get(r.id);
+        if (!local || r.updatedAt >= local.updatedAt) byId.set(r.id, r);
+      }
+      // any local-only project belongs to this user now — push it up
+      for (const p of byId.values()) if (!remote.some((r) => r.id === p.id)) dirty.add(p.id);
+      const projects = [...byId.values()].sort((a, b) => b.updatedAt - a.updatedAt);
+      state = { ...state, projects, currentId: state.currentId ?? projects[0]?.id ?? null };
+      writeLocal();
+      emit();
+      schedulePush();
+    } catch (e) {
+      syncError = e instanceof Error ? e.message : "Cloud sync failed.";
+      emit();
+    }
+  })();
+}
+
+function schedulePush() {
+  if (!syncUserId || dirty.size === 0) return;
+  if (pushTimer) clearTimeout(pushTimer);
+  pushTimer = setTimeout(() => {
+    void (async () => {
+      const uid = syncUserId;
+      if (!uid) return;
+      const ids = [...dirty];
+      dirty.clear();
+      try {
+        const { pushRemoteProject } = await import("./cloud");
+        for (const id of ids) {
+          const p = state.projects.find((x) => x.id === id);
+          if (p) await pushRemoteProject(uid, p);
+        }
+        syncError = null;
+        setSaveStatus("saved");
+      } catch (e) {
+        ids.forEach((i) => dirty.add(i));
+        syncError = e instanceof Error ? e.message : "Could not save to the cloud.";
+      }
+      emit();
+    })();
+  }, 700);
+}
+
+function writeLocal() {
   if (typeof window === "undefined") return;
-  setSaveStatus("saving");
-  if (saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => setSaveStatus("saved"), 420);
   try {
     window.localStorage.setItem(KEY, JSON.stringify(state));
   } catch {
     /* quota or private mode — state stays in memory for this session */
   }
+}
+
+function persist() {
+  if (typeof window === "undefined") return;
+  setSaveStatus("saving");
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => setSaveStatus("saved"), 420);
+  writeLocal();
+  schedulePush();
 }
 
 function emit() {

@@ -16,7 +16,7 @@ export async function pushRemoteProject(userId: string, project: Project): Promi
     id: project.id,
     user_id: userId,
     title: project.title,
-    data: project as unknown as Record<string, unknown>,
+    data: JSON.parse(JSON.stringify(project)) as never,
   });
   if (error) throw new Error(error.message);
 }
