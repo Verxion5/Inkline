@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
+import { Route as AppProjectsRouteImport } from './routes/_app/projects'
+import { Route as AppProjectsNewRouteImport } from './routes/_app/projects.new'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -27,27 +29,49 @@ const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
   path: '/api/generate-image',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppProjectsRoute = AppProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProjectsNewRoute = AppProjectsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppProjectsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/projects': typeof AppProjectsRouteWithChildren
   '/api/generate-image': typeof ApiGenerateImageRoute
+  '/projects/new': typeof AppProjectsNewRoute
 }
 export interface FileRoutesByTo {
+  '/projects': typeof AppProjectsRouteWithChildren
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/': typeof AppIndexRoute
+  '/projects/new': typeof AppProjectsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/projects': typeof AppProjectsRouteWithChildren
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/projects/new': typeof AppProjectsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/generate-image'
+  fullPaths: '/' | '/projects' | '/api/generate-image' | '/projects/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/api/generate-image' | '/'
-  id: '__root__' | '/_app' | '/api/generate-image' | '/_app/'
+  to: '/projects' | '/api/generate-image' | '/' | '/projects/new'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_app/projects'
+    | '/api/generate-image'
+    | '/_app/'
+    | '/_app/projects/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -78,14 +102,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGenerateImageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/projects': {
+      id: '/_app/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof AppProjectsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/projects/new': {
+      id: '/_app/projects/new'
+      path: '/new'
+      fullPath: '/projects/new'
+      preLoaderRoute: typeof AppProjectsNewRouteImport
+      parentRoute: typeof AppProjectsRoute
+    }
   }
 }
 
+interface AppProjectsRouteChildren {
+  AppProjectsNewRoute: typeof AppProjectsNewRoute
+}
+
+const AppProjectsRouteChildren: AppProjectsRouteChildren = {
+  AppProjectsNewRoute: AppProjectsNewRoute,
+}
+
+const AppProjectsRouteWithChildren = AppProjectsRoute._addFileChildren(
+  AppProjectsRouteChildren,
+)
+
 interface AppRouteChildren {
+  AppProjectsRoute: typeof AppProjectsRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppProjectsRoute: AppProjectsRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }
 
