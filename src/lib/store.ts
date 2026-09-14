@@ -261,15 +261,18 @@ export function useProjectActions(id: ID) {
 
 export function createProject(partial: Partial<Project> = {}): Project {
   const project = newProject(partial);
+  dirty.add(project.id);
   setDB((db) => ({ ...db, projects: [project, ...db.projects], currentId: project.id }));
   return project;
 }
 
 export function deleteProject(id: ID) {
+  dirty.delete(id);
   setDB((db) => {
     const projects = db.projects.filter((p) => p.id !== id);
     return { ...db, projects, currentId: db.currentId === id ? (projects[0]?.id ?? null) : db.currentId };
   });
+  if (syncUserId) void import("./cloud").then((m) => m.deleteRemoteProject(id)).catch(() => {});
 }
 
 export function setCurrentProject(id: ID | null) {
