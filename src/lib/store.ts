@@ -169,8 +169,9 @@ export function useProject(id: string | undefined): Project | undefined {
   return db.projects.find((p) => p.id === id);
 }
 
-/** Mutate the whole DB. */
+/** Mutate the whole DB. Always hydrates first so writes never clobber stored state. */
 export function setDB(fn: (db: DB) => DB) {
+  hydrate();
   state = fn(state);
   persist();
   emit();
@@ -178,6 +179,7 @@ export function setDB(fn: (db: DB) => DB) {
 
 /** Mutate one project immutably; bumps updatedAt. */
 export function updateProject(id: ID, fn: (p: Project) => Project) {
+  dirty.add(id);
   setDB((db) => ({
     ...db,
     projects: db.projects.map((p) => (p.id === id ? { ...fn(p), updatedAt: Date.now() } : p)),
