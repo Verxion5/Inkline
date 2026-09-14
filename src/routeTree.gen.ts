@@ -12,7 +12,21 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
+import { Route as AppWorldRouteImport } from './routes/_app/world'
+import { Route as AppTimelineRouteImport } from './routes/_app/timeline'
+import { Route as AppStoryRouteImport } from './routes/_app/story'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppProjectsRouteImport } from './routes/_app/projects'
+import { Route as AppGenomeRouteImport } from './routes/_app/genome'
+import { Route as AppExportRouteImport } from './routes/_app/export'
+import { Route as AppEditorRouteImport } from './routes/_app/editor'
+import { Route as AppDirectorRouteImport } from './routes/_app/director'
+import { Route as AppContinuityRouteImport } from './routes/_app/continuity'
+import { Route as AppCommandRouteImport } from './routes/_app/command'
+import { Route as AppCharactersRouteImport } from './routes/_app/characters'
+import { Route as AppChaptersRouteImport } from './routes/_app/chapters'
+import { Route as AppAssetsRouteImport } from './routes/_app/assets'
+import { Route as AppArtRouteImport } from './routes/_app/art'
 import { Route as AppProjectsNewRouteImport } from './routes/_app/projects.new'
 
 const AppRoute = AppRouteImport.update({
@@ -29,9 +43,79 @@ const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
   path: '/api/generate-image',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppWorldRoute = AppWorldRouteImport.update({
+  id: '/world',
+  path: '/world',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTimelineRoute = AppTimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStoryRoute = AppStoryRouteImport.update({
+  id: '/story',
+  path: '/story',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProjectsRoute = AppProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGenomeRoute = AppGenomeRouteImport.update({
+  id: '/genome',
+  path: '/genome',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppExportRoute = AppExportRouteImport.update({
+  id: '/export',
+  path: '/export',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEditorRoute = AppEditorRouteImport.update({
+  id: '/editor',
+  path: '/editor',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDirectorRoute = AppDirectorRouteImport.update({
+  id: '/director',
+  path: '/director',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppContinuityRoute = AppContinuityRouteImport.update({
+  id: '/continuity',
+  path: '/continuity',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCommandRoute = AppCommandRouteImport.update({
+  id: '/command',
+  path: '/command',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCharactersRoute = AppCharactersRouteImport.update({
+  id: '/characters',
+  path: '/characters',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppChaptersRoute = AppChaptersRouteImport.update({
+  id: '/chapters',
+  path: '/chapters',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAssetsRoute = AppAssetsRouteImport.update({
+  id: '/assets',
+  path: '/assets',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppArtRoute = AppArtRouteImport.update({
+  id: '/art',
+  path: '/art',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProjectsNewRoute = AppProjectsNewRouteImport.update({
@@ -42,12 +126,40 @@ const AppProjectsNewRoute = AppProjectsNewRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/art': typeof AppArtRoute
+  '/assets': typeof AppAssetsRoute
+  '/chapters': typeof AppChaptersRoute
+  '/characters': typeof AppCharactersRoute
+  '/command': typeof AppCommandRoute
+  '/continuity': typeof AppContinuityRoute
+  '/director': typeof AppDirectorRoute
+  '/editor': typeof AppEditorRoute
+  '/export': typeof AppExportRoute
+  '/genome': typeof AppGenomeRoute
   '/projects': typeof AppProjectsRouteWithChildren
+  '/settings': typeof AppSettingsRoute
+  '/story': typeof AppStoryRoute
+  '/timeline': typeof AppTimelineRoute
+  '/world': typeof AppWorldRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/projects/new': typeof AppProjectsNewRoute
 }
 export interface FileRoutesByTo {
+  '/art': typeof AppArtRoute
+  '/assets': typeof AppAssetsRoute
+  '/chapters': typeof AppChaptersRoute
+  '/characters': typeof AppCharactersRoute
+  '/command': typeof AppCommandRoute
+  '/continuity': typeof AppContinuityRoute
+  '/director': typeof AppDirectorRoute
+  '/editor': typeof AppEditorRoute
+  '/export': typeof AppExportRoute
+  '/genome': typeof AppGenomeRoute
   '/projects': typeof AppProjectsRouteWithChildren
+  '/settings': typeof AppSettingsRoute
+  '/story': typeof AppStoryRoute
+  '/timeline': typeof AppTimelineRoute
+  '/world': typeof AppWorldRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/': typeof AppIndexRoute
   '/projects/new': typeof AppProjectsNewRoute
@@ -55,20 +167,84 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/art': typeof AppArtRoute
+  '/_app/assets': typeof AppAssetsRoute
+  '/_app/chapters': typeof AppChaptersRoute
+  '/_app/characters': typeof AppCharactersRoute
+  '/_app/command': typeof AppCommandRoute
+  '/_app/continuity': typeof AppContinuityRoute
+  '/_app/director': typeof AppDirectorRoute
+  '/_app/editor': typeof AppEditorRoute
+  '/_app/export': typeof AppExportRoute
+  '/_app/genome': typeof AppGenomeRoute
   '/_app/projects': typeof AppProjectsRouteWithChildren
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/story': typeof AppStoryRoute
+  '/_app/timeline': typeof AppTimelineRoute
+  '/_app/world': typeof AppWorldRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/_app/': typeof AppIndexRoute
   '/_app/projects/new': typeof AppProjectsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/projects' | '/api/generate-image' | '/projects/new'
+  fullPaths:
+    | '/'
+    | '/art'
+    | '/assets'
+    | '/chapters'
+    | '/characters'
+    | '/command'
+    | '/continuity'
+    | '/director'
+    | '/editor'
+    | '/export'
+    | '/genome'
+    | '/projects'
+    | '/settings'
+    | '/story'
+    | '/timeline'
+    | '/world'
+    | '/api/generate-image'
+    | '/projects/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/projects' | '/api/generate-image' | '/' | '/projects/new'
+  to:
+    | '/art'
+    | '/assets'
+    | '/chapters'
+    | '/characters'
+    | '/command'
+    | '/continuity'
+    | '/director'
+    | '/editor'
+    | '/export'
+    | '/genome'
+    | '/projects'
+    | '/settings'
+    | '/story'
+    | '/timeline'
+    | '/world'
+    | '/api/generate-image'
+    | '/'
+    | '/projects/new'
   id:
     | '__root__'
     | '/_app'
+    | '/_app/art'
+    | '/_app/assets'
+    | '/_app/chapters'
+    | '/_app/characters'
+    | '/_app/command'
+    | '/_app/continuity'
+    | '/_app/director'
+    | '/_app/editor'
+    | '/_app/export'
+    | '/_app/genome'
     | '/_app/projects'
+    | '/_app/settings'
+    | '/_app/story'
+    | '/_app/timeline'
+    | '/_app/world'
     | '/api/generate-image'
     | '/_app/'
     | '/_app/projects/new'
@@ -102,11 +278,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGenerateImageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/world': {
+      id: '/_app/world'
+      path: '/world'
+      fullPath: '/world'
+      preLoaderRoute: typeof AppWorldRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/timeline': {
+      id: '/_app/timeline'
+      path: '/timeline'
+      fullPath: '/timeline'
+      preLoaderRoute: typeof AppTimelineRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/story': {
+      id: '/_app/story'
+      path: '/story'
+      fullPath: '/story'
+      preLoaderRoute: typeof AppStoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/projects': {
       id: '/_app/projects'
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof AppProjectsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/genome': {
+      id: '/_app/genome'
+      path: '/genome'
+      fullPath: '/genome'
+      preLoaderRoute: typeof AppGenomeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/export': {
+      id: '/_app/export'
+      path: '/export'
+      fullPath: '/export'
+      preLoaderRoute: typeof AppExportRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/editor': {
+      id: '/_app/editor'
+      path: '/editor'
+      fullPath: '/editor'
+      preLoaderRoute: typeof AppEditorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/director': {
+      id: '/_app/director'
+      path: '/director'
+      fullPath: '/director'
+      preLoaderRoute: typeof AppDirectorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/continuity': {
+      id: '/_app/continuity'
+      path: '/continuity'
+      fullPath: '/continuity'
+      preLoaderRoute: typeof AppContinuityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/command': {
+      id: '/_app/command'
+      path: '/command'
+      fullPath: '/command'
+      preLoaderRoute: typeof AppCommandRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/characters': {
+      id: '/_app/characters'
+      path: '/characters'
+      fullPath: '/characters'
+      preLoaderRoute: typeof AppCharactersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/chapters': {
+      id: '/_app/chapters'
+      path: '/chapters'
+      fullPath: '/chapters'
+      preLoaderRoute: typeof AppChaptersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/assets': {
+      id: '/_app/assets'
+      path: '/assets'
+      fullPath: '/assets'
+      preLoaderRoute: typeof AppAssetsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/art': {
+      id: '/_app/art'
+      path: '/art'
+      fullPath: '/art'
+      preLoaderRoute: typeof AppArtRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/projects/new': {
@@ -132,12 +406,40 @@ const AppProjectsRouteWithChildren = AppProjectsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppArtRoute: typeof AppArtRoute
+  AppAssetsRoute: typeof AppAssetsRoute
+  AppChaptersRoute: typeof AppChaptersRoute
+  AppCharactersRoute: typeof AppCharactersRoute
+  AppCommandRoute: typeof AppCommandRoute
+  AppContinuityRoute: typeof AppContinuityRoute
+  AppDirectorRoute: typeof AppDirectorRoute
+  AppEditorRoute: typeof AppEditorRoute
+  AppExportRoute: typeof AppExportRoute
+  AppGenomeRoute: typeof AppGenomeRoute
   AppProjectsRoute: typeof AppProjectsRouteWithChildren
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppStoryRoute: typeof AppStoryRoute
+  AppTimelineRoute: typeof AppTimelineRoute
+  AppWorldRoute: typeof AppWorldRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppArtRoute: AppArtRoute,
+  AppAssetsRoute: AppAssetsRoute,
+  AppChaptersRoute: AppChaptersRoute,
+  AppCharactersRoute: AppCharactersRoute,
+  AppCommandRoute: AppCommandRoute,
+  AppContinuityRoute: AppContinuityRoute,
+  AppDirectorRoute: AppDirectorRoute,
+  AppEditorRoute: AppEditorRoute,
+  AppExportRoute: AppExportRoute,
+  AppGenomeRoute: AppGenomeRoute,
   AppProjectsRoute: AppProjectsRouteWithChildren,
+  AppSettingsRoute: AppSettingsRoute,
+  AppStoryRoute: AppStoryRoute,
+  AppTimelineRoute: AppTimelineRoute,
+  AppWorldRoute: AppWorldRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
