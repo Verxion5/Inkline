@@ -41,6 +41,11 @@ function AssetLibrary() {
 
   const filter = (text: string) => text.toLowerCase().includes(q.toLowerCase());
 
+  const drawnPanels = project.chapters
+    .flatMap((c) => c.scenes)
+    .flatMap((s) => s.panels)
+    .filter((p) => p.imageUrl && filter(p.description + p.shot));
+
   return (
     <div>
       <PageHeader title="Asset Library" description="Reusable characters, locations, outfits, props, panels and styles." />
@@ -112,11 +117,11 @@ function AssetLibrary() {
       )}
 
       {tab === "panels" && (
-        project.chapters.reduce((n, c) => n + c.scenes.reduce((m, s) => m + s.panels.filter((p) => p.imageUrl).length, 0), 0) === 0 ? (
+        drawnPanels.length === 0 ? (
           <EmptyState icon={<Icons.ImageIcon className="h-5 w-5" />} title="No drawn panels" description="Generate panel art in the Scene Director or Comic Editor." />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {project.chapters.flatMap((c) => c.scenes.flatMap((s) => s.panels.filter((p) => p.imageUrl && filter(p.description + p.shot)).map((p) => (
+            {drawnPanels.map((p) => (
               <div key={p.id} className="surface-card overflow-hidden">
                 <div className={`overflow-hidden ${project.format === "manga" ? "aspect-[4/3]" : "aspect-[3/4]"}`}>
                   <img src={p.imageUrl} alt={p.description} className="h-full w-full object-cover" />
@@ -126,7 +131,7 @@ function AssetLibrary() {
                   <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">{p.description || "No description"}</p>
                 </div>
               </div>
-            ))))}
+            ))}
           </div>
         )
       )}
