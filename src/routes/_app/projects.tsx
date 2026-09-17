@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, Outlet, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import * as Icons from "lucide-react";
 import { PageHeader, Cover, Chip, EmptyState, TextInput } from "@/components/app/kit";
@@ -20,6 +20,9 @@ export const Route = createFileRoute("/_app/projects")({
 });
 
 function ProjectsPage() {
+  const isChildRoute = useRouterState({ select: (s) => s.location.pathname !== "/projects" });
+  if (isChildRoute) return <Outlet />;
+
   const db = useDB();
   const navigate = useNavigate();
   const [q, setQ] = useState("");
