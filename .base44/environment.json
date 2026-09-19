@@ -1,0 +1,17 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "SUPABASE_SERVICE_ROLE_KEY",
+      "description": "Supabase service role key (server-only, bypasses RLS). Find it in your Supabase project Dashboard > Settings > API > service_role secret.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "LOVABLE_API_KEY",
+      "description": "Lovable API key used by the AI image generation feature (src/lib/ai.server.ts). Obtain from Lovable Cloud settings.",
+      "requiredAtBoot": false
+    }
+  ]
+}
