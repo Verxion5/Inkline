@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
@@ -29,6 +30,11 @@ import { Route as AppAssetsRouteImport } from './routes/_app/assets'
 import { Route as AppArtRouteImport } from './routes/_app/art'
 import { Route as AppProjectsNewRouteImport } from './routes/_app/projects.new'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -126,6 +132,7 @@ const AppProjectsNewRoute = AppProjectsNewRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/auth': typeof AuthRoute
   '/art': typeof AppArtRoute
   '/assets': typeof AppAssetsRoute
   '/chapters': typeof AppChaptersRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/projects/new': typeof AppProjectsNewRoute
 }
 export interface FileRoutesByTo {
+  '/auth': typeof AuthRoute
   '/art': typeof AppArtRoute
   '/assets': typeof AppAssetsRoute
   '/chapters': typeof AppChaptersRoute
@@ -167,6 +175,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/auth': typeof AuthRoute
   '/_app/art': typeof AppArtRoute
   '/_app/assets': typeof AppAssetsRoute
   '/_app/chapters': typeof AppChaptersRoute
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/art'
     | '/assets'
     | '/chapters'
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/projects/new'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/auth'
     | '/art'
     | '/assets'
     | '/chapters'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_app'
+    | '/auth'
     | '/_app/art'
     | '/_app/assets'
     | '/_app/chapters'
@@ -252,11 +264,19 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
+  AuthRoute: typeof AuthRoute
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -447,6 +467,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
+  AuthRoute: AuthRoute,
   ApiGenerateImageRoute: ApiGenerateImageRoute,
 }
 export const routeTree = rootRouteImport
