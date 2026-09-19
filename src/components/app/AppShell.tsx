@@ -4,6 +4,7 @@ import * as Icons from "lucide-react";
 import { NAV, navTitle } from "@/lib/nav";
 import { useDB, useCurrentProject, useSaveStatus, setCurrentProject } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { AccountMenu } from "@/components/app/AccountMenu";
 import {
   CommandDialog,
   CommandEmpty,
@@ -202,13 +203,7 @@ function TopBar({
         >
           <Icons.LifeBuoy className="h-4 w-4" />
         </Link>
-        <Link
-          to="/settings"
-          title="Account"
-          className="grid h-9 w-9 place-items-center rounded-full violet-gradient text-xs font-semibold text-primary-foreground"
-        >
-          IN
-        </Link>
+        <AccountMenu />
       </div>
     </header>
   );
