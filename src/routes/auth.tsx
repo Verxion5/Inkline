@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import * as Icons from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +27,19 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // After an OAuth callback the browser lands back on /auth; redirect
+  // once Supabase establishes the session. Also bounces already-logged-in
+  // users away from the auth page.
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      if (s) navigate({ to: "/" });
+    });
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate({ to: "/" });
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [navigate]);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
