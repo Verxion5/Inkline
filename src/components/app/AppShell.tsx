@@ -12,6 +12,16 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/hooks/useAuth";
+import { checkChapter } from "@/lib/continuity";
 
 function Icon({ name, className }: { name: string; className?: string }) {
   const Cmp = (Icons as unknown as Record<string, Icons.LucideIcon>)[name] ?? Icons.Circle;
@@ -188,13 +198,7 @@ function TopBar({
       </button>
 
       <div className="flex items-center gap-1">
-        <Link
-          to="/continuity"
-          title="Continuity alerts"
-          className="grid h-9 w-9 place-items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
-        >
-          <Icons.Bell className="h-4 w-4" />
-        </Link>
+        <Notifications />
         <Link
           to="/settings"
           title="Help & settings"
@@ -202,15 +206,88 @@ function TopBar({
         >
           <Icons.LifeBuoy className="h-4 w-4" />
         </Link>
-        <Link
-          to="/settings"
-          title="Account"
-          className="grid h-9 w-9 place-items-center rounded-full violet-gradient text-xs font-semibold text-primary-foreground"
-        >
-          IN
-        </Link>
+        <AccountMenu />
       </div>
     </header>
+  );
+}
+
+function Notifications() {
+  const project = useCurrentProject();
+  const issues = useMemo(() => {
+    if (!project) return [] as string[];
+    const out: string[] = [];
+    for (const ch of project.chapters) for (const i of checkChapter(project, ch)) out.push(`Ch.${ch.number}: ${i.message}`);
+    return [...new Set(out)].slice(0, 6);
+  }, [project]);
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        aria-label="Notifications"
+        className="relative grid h-9 w-9 place-items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+      >
+        <Icons.Bell className="h-4 w-4" />
+        {issues.length > 0 && (
+          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-warning" />
+        )}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-80">
+        <DropdownMenuLabel>Studio alerts</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {issues.length === 0 ? (
+          <div className="px-2 py-3 text-xs text-muted-foreground">Nothing needs your attention right now.</div>
+        ) : (
+          issues.map((i) => (
+            <div key={i} className="px-2 py-1.5 text-xs leading-relaxed text-muted-foreground">
+              {i}
+            </div>
+          ))
+        )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/continuity">Open Continuity Center</Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function AccountMenu() {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const initials = (user?.email ?? "IN").slice(0, 2).toUpperCase();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        aria-label="Account"
+        className="grid h-9 w-9 place-items-center rounded-full violet-gradient text-xs font-semibold text-primary-foreground"
+      >
+        {initials}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-60">
+        <DropdownMenuLabel className="truncate text-xs font-normal text-muted-foreground">
+          {user?.email ?? "Signed in"}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/settings">Profile & settings</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/projects">My projects</Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={async () => {
+            await signOut();
+            navigate({ to: "/auth", replace: true });
+          }}
+        >
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
