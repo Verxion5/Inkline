@@ -55,6 +55,14 @@ export type DialogueBlock = { id: ID; speaker: string; text: string; kind: Dialo
 
 export type PanelStatus = "planned" | "drawing" | "drawn" | "error";
 
+/** One saved render of a panel. `path` is a key in the private `panels` storage bucket. */
+export type PanelVersion = {
+  id: ID;
+  path: string;
+  prompt: string;
+  createdAt: number;
+};
+
 export type Panel = {
   id: ID;
   shot: string;
@@ -66,7 +74,11 @@ export type Panel = {
   dialogue: DialogueBlock[];
   sfx: string;
   promptOverride: string;
+  /** Legacy/in-session data URL. Persisted art lives in `imagePath`. */
   imageUrl: string;
+  /** Storage key of the current render in the private `panels` bucket. */
+  imagePath?: string;
+  versions?: PanelVersion[];
   status: PanelStatus;
   error?: string;
 };
