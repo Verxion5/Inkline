@@ -48,7 +48,11 @@ export async function signedPanelUrl(path: string): Promise<string | null> {
 export async function deletePanelImages(paths: string[]) {
   if (paths.length === 0) return;
   paths.forEach((p) => cache.delete(p));
-  await supabase.storage.from(BUCKET).remove(paths).catch?.(() => {});
+  try {
+    await supabase.storage.from(BUCKET).remove(paths);
+  } catch {
+    /* best effort — the project record is the source of truth */
+  }
 }
 
 /** Resolves a stored panel path (or a session data URL) into something renderable. */
