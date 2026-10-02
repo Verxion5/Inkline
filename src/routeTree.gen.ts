@@ -9,34 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AppRouteImport } from './routes/_app'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
-import { Route as AppArtRouteImport } from './routes/_app/art'
-import { Route as AppAssetsRouteImport } from './routes/_app/assets'
-import { Route as AppChaptersRouteImport } from './routes/_app/chapters'
-import { Route as AppCharactersRouteImport } from './routes/_app/characters'
-import { Route as AppCommandRouteImport } from './routes/_app/command'
-import { Route as AppContinuityRouteImport } from './routes/_app/continuity'
-import { Route as AppDirectorRouteImport } from './routes/_app/director'
-import { Route as AppEditorRouteImport } from './routes/_app/editor'
-import { Route as AppExportRouteImport } from './routes/_app/export'
-import { Route as AppGenomeRouteImport } from './routes/_app/genome'
-import { Route as AppSettingsRouteImport } from './routes/_app/settings'
-import { Route as AppStoryRouteImport } from './routes/_app/story'
-import { Route as AppTimelineRouteImport } from './routes/_app/timeline'
-import { Route as AppWorldRouteImport } from './routes/_app/world'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
+import { Route as AppWorldRouteImport } from './routes/_app/world'
+import { Route as AppTimelineRouteImport } from './routes/_app/timeline'
+import { Route as AppStoryRouteImport } from './routes/_app/story'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as AppGenomeRouteImport } from './routes/_app/genome'
+import { Route as AppExportRouteImport } from './routes/_app/export'
+import { Route as AppEditorRouteImport } from './routes/_app/editor'
+import { Route as AppDirectorRouteImport } from './routes/_app/director'
+import { Route as AppContinuityRouteImport } from './routes/_app/continuity'
+import { Route as AppCommandRouteImport } from './routes/_app/command'
+import { Route as AppCharactersRouteImport } from './routes/_app/characters'
+import { Route as AppChaptersRouteImport } from './routes/_app/chapters'
+import { Route as AppAssetsRouteImport } from './routes/_app/assets'
+import { Route as AppArtRouteImport } from './routes/_app/art'
 import { Route as AppProjectsIndexRouteImport } from './routes/_app/projects.index'
 import { Route as AppProjectsNewRouteImport } from './routes/_app/projects.new'
 
-const AppRoute = AppRouteImport.update({
-  id: '/_app',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -44,64 +44,14 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
-const AppArtRoute = AppArtRouteImport.update({
-  id: '/art',
-  path: '/art',
-  getParentRoute: () => AppRoute,
+const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
+  id: '/api/generate-image',
+  path: '/api/generate-image',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AppAssetsRoute = AppAssetsRouteImport.update({
-  id: '/assets',
-  path: '/assets',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppChaptersRoute = AppChaptersRouteImport.update({
-  id: '/chapters',
-  path: '/chapters',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCharactersRoute = AppCharactersRouteImport.update({
-  id: '/characters',
-  path: '/characters',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCommandRoute = AppCommandRouteImport.update({
-  id: '/command',
-  path: '/command',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppContinuityRoute = AppContinuityRouteImport.update({
-  id: '/continuity',
-  path: '/continuity',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDirectorRoute = AppDirectorRouteImport.update({
-  id: '/director',
-  path: '/director',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppEditorRoute = AppEditorRouteImport.update({
-  id: '/editor',
-  path: '/editor',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppExportRoute = AppExportRouteImport.update({
-  id: '/export',
-  path: '/export',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGenomeRoute = AppGenomeRouteImport.update({
-  id: '/genome',
-  path: '/genome',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSettingsRoute = AppSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppStoryRoute = AppStoryRouteImport.update({
-  id: '/story',
-  path: '/story',
+const AppWorldRoute = AppWorldRouteImport.update({
+  id: '/world',
+  path: '/world',
   getParentRoute: () => AppRoute,
 } as any)
 const AppTimelineRoute = AppTimelineRouteImport.update({
@@ -109,15 +59,65 @@ const AppTimelineRoute = AppTimelineRouteImport.update({
   path: '/timeline',
   getParentRoute: () => AppRoute,
 } as any)
-const AppWorldRoute = AppWorldRouteImport.update({
-  id: '/world',
-  path: '/world',
+const AppStoryRoute = AppStoryRouteImport.update({
+  id: '/story',
+  path: '/story',
   getParentRoute: () => AppRoute,
 } as any)
-const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
-  id: '/api/generate-image',
-  path: '/api/generate-image',
-  getParentRoute: () => rootRouteImport,
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGenomeRoute = AppGenomeRouteImport.update({
+  id: '/genome',
+  path: '/genome',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppExportRoute = AppExportRouteImport.update({
+  id: '/export',
+  path: '/export',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEditorRoute = AppEditorRouteImport.update({
+  id: '/editor',
+  path: '/editor',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDirectorRoute = AppDirectorRouteImport.update({
+  id: '/director',
+  path: '/director',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppContinuityRoute = AppContinuityRouteImport.update({
+  id: '/continuity',
+  path: '/continuity',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCommandRoute = AppCommandRouteImport.update({
+  id: '/command',
+  path: '/command',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCharactersRoute = AppCharactersRouteImport.update({
+  id: '/characters',
+  path: '/characters',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppChaptersRoute = AppChaptersRouteImport.update({
+  id: '/chapters',
+  path: '/chapters',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAssetsRoute = AppAssetsRouteImport.update({
+  id: '/assets',
+  path: '/assets',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppArtRoute = AppArtRouteImport.update({
+  id: '/art',
+  path: '/art',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppProjectsIndexRoute = AppProjectsIndexRouteImport.update({
   id: '/projects/',
@@ -270,18 +270,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_app': {
-      id: '/_app'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/': {
@@ -291,88 +291,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/art': {
-      id: '/_app/art'
-      path: '/art'
-      fullPath: '/art'
-      preLoaderRoute: typeof AppArtRouteImport
-      parentRoute: typeof AppRoute
+    '/api/generate-image': {
+      id: '/api/generate-image'
+      path: '/api/generate-image'
+      fullPath: '/api/generate-image'
+      preLoaderRoute: typeof ApiGenerateImageRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_app/assets': {
-      id: '/_app/assets'
-      path: '/assets'
-      fullPath: '/assets'
-      preLoaderRoute: typeof AppAssetsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/chapters': {
-      id: '/_app/chapters'
-      path: '/chapters'
-      fullPath: '/chapters'
-      preLoaderRoute: typeof AppChaptersRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/characters': {
-      id: '/_app/characters'
-      path: '/characters'
-      fullPath: '/characters'
-      preLoaderRoute: typeof AppCharactersRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/command': {
-      id: '/_app/command'
-      path: '/command'
-      fullPath: '/command'
-      preLoaderRoute: typeof AppCommandRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/continuity': {
-      id: '/_app/continuity'
-      path: '/continuity'
-      fullPath: '/continuity'
-      preLoaderRoute: typeof AppContinuityRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/director': {
-      id: '/_app/director'
-      path: '/director'
-      fullPath: '/director'
-      preLoaderRoute: typeof AppDirectorRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/editor': {
-      id: '/_app/editor'
-      path: '/editor'
-      fullPath: '/editor'
-      preLoaderRoute: typeof AppEditorRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/export': {
-      id: '/_app/export'
-      path: '/export'
-      fullPath: '/export'
-      preLoaderRoute: typeof AppExportRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/genome': {
-      id: '/_app/genome'
-      path: '/genome'
-      fullPath: '/genome'
-      preLoaderRoute: typeof AppGenomeRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/settings': {
-      id: '/_app/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AppSettingsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/story': {
-      id: '/_app/story'
-      path: '/story'
-      fullPath: '/story'
-      preLoaderRoute: typeof AppStoryRouteImport
+    '/_app/world': {
+      id: '/_app/world'
+      path: '/world'
+      fullPath: '/world'
+      preLoaderRoute: typeof AppWorldRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/timeline': {
@@ -382,19 +312,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTimelineRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/world': {
-      id: '/_app/world'
-      path: '/world'
-      fullPath: '/world'
-      preLoaderRoute: typeof AppWorldRouteImport
+    '/_app/story': {
+      id: '/_app/story'
+      path: '/story'
+      fullPath: '/story'
+      preLoaderRoute: typeof AppStoryRouteImport
       parentRoute: typeof AppRoute
     }
-    '/api/generate-image': {
-      id: '/api/generate-image'
-      path: '/api/generate-image'
-      fullPath: '/api/generate-image'
-      preLoaderRoute: typeof ApiGenerateImageRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/genome': {
+      id: '/_app/genome'
+      path: '/genome'
+      fullPath: '/genome'
+      preLoaderRoute: typeof AppGenomeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/export': {
+      id: '/_app/export'
+      path: '/export'
+      fullPath: '/export'
+      preLoaderRoute: typeof AppExportRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/editor': {
+      id: '/_app/editor'
+      path: '/editor'
+      fullPath: '/editor'
+      preLoaderRoute: typeof AppEditorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/director': {
+      id: '/_app/director'
+      path: '/director'
+      fullPath: '/director'
+      preLoaderRoute: typeof AppDirectorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/continuity': {
+      id: '/_app/continuity'
+      path: '/continuity'
+      fullPath: '/continuity'
+      preLoaderRoute: typeof AppContinuityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/command': {
+      id: '/_app/command'
+      path: '/command'
+      fullPath: '/command'
+      preLoaderRoute: typeof AppCommandRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/characters': {
+      id: '/_app/characters'
+      path: '/characters'
+      fullPath: '/characters'
+      preLoaderRoute: typeof AppCharactersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/chapters': {
+      id: '/_app/chapters'
+      path: '/chapters'
+      fullPath: '/chapters'
+      preLoaderRoute: typeof AppChaptersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/assets': {
+      id: '/_app/assets'
+      path: '/assets'
+      fullPath: '/assets'
+      preLoaderRoute: typeof AppAssetsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/art': {
+      id: '/_app/art'
+      path: '/art'
+      fullPath: '/art'
+      preLoaderRoute: typeof AppArtRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/projects/': {
       id: '/_app/projects/'
