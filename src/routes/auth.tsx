@@ -33,10 +33,21 @@ function AuthPage() {
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) setMode("reset");
+    const recovery = window.location.hash.includes("type=recovery");
+    if (recovery) setMode("reset");
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session && !window.location.hash.includes("type=recovery")) navigate({ to: "/", replace: true });
+      if (data.session && !recovery) navigate({ to: "/", replace: true });
     });
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setMode("reset");
+        return;
+      }
+      if (event === "SIGNED_IN" && session && !window.location.hash.includes("type=recovery")) {
+        navigate({ to: "/", replace: true });
+      }
+    });
+    return () => sub.subscription.unsubscribe();
   }, [navigate]);
 
   async function submit(e: React.FormEvent) {
@@ -46,11 +57,15 @@ function AuthPage() {
     try {
       if (mode === "signin") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if (error) {
+          if (/not confirmed/i.test(error.message)) throw new Error("Please confirm your email first — check your inbox for the verification link.");
+          if (/invalid login/i.test(error.message)) throw new Error("Email or password is incorrect.");
+          throw error;
+        }
         toast.success("Welcome back to Inkline.");
         navigate({ to: "/", replace: true });
       } else if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -59,8 +74,14 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        setNotice("Account created. If email confirmation is on, check your inbox to verify, then sign in.");
-        toast.success("Account created.");
+        if (data.session) {
+          toast.success("Account created. Welcome to Inkline.");
+          navigate({ to: "/", replace: true });
+          return;
+        }
+        setNotice("Account created. Check your inbox and click the verification link, then sign in here.");
+        toast.success("Check your email to confirm your account.");
+        setMode("signin");
       } else if (mode === "forgot") {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/auth`,
