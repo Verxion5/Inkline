@@ -5,7 +5,7 @@ import { PageHeader, Cover, Chip, EmptyState, TextInput } from "@/components/app
 import { useDB, setCurrentProject, deleteProject } from "@/lib/store";
 import { projectReadiness } from "@/lib/continuity";
 
-export const Route = createFileRoute("/_app/projects")({
+export const Route = createFileRoute("/_app/projects/")({
   head: () => ({
     meta: [
       { title: "My Projects — Inkline" },
