@@ -19,8 +19,8 @@ export const Route = createFileRoute("/api/generate-image")({
         if (!parsed.success) return new Response("Invalid image request", { status: 400 });
         const job = parsed.data;
 
-        const key = process.env["LOVABLE_API_KEY"];
-        if (!key) return new Response("Image generation is not configured (missing LOVABLE_API_KEY).", { status: 500 });
+        const key = process.env["AI_API_KEY"];
+        if (!key) return new Response("Image generation is not configured (missing AI_API_KEY).", { status: 500 });
 
         const upstream = await fetch(IMAGES_ENDPOINT, {
           method: "POST",

@@ -6,7 +6,7 @@
  */
 import type { Aspect, Format, QualityLevel } from "./artDirection";
 
-export const IMAGES_ENDPOINT = "https://ai.gateway.lovable.dev/v1/images/generations";
+export const IMAGES_ENDPOINT = process.env["AI_IMAGES_URL"] || "https://api.openai.com/v1/images/generations";
 
 export type ImageJob = {
   prompt: string;
@@ -18,7 +18,7 @@ export type ImageJob = {
 };
 
 export type ProviderInfo = {
-  provider: "lovable-ai";
+  provider: "ai";
   models: Record<QualityLevel, string>;
   visionModel: string;
 };
@@ -32,7 +32,7 @@ const MODELS: Record<QualityLevel, string> = {
 export const VISION_MODEL = "google/gemini-3.7-flash";
 
 export function describeProvider(): ProviderInfo {
-  return { provider: "lovable-ai", models: MODELS, visionModel: VISION_MODEL };
+  return { provider: "ai", models: MODELS, visionModel: VISION_MODEL };
 }
 
 export function selectModel(quality: QualityLevel): string {

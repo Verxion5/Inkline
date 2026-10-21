@@ -1,0 +1,35 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "SUPABASE_SERVICE_ROLE_KEY",
+      "description": "Supabase service role key for server-side admin operations (found in Supabase Dashboard → Settings → API → service_role key). A placeholder is generated for dev; replace with the real key for cloud sync features.",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": true
+    },
+    {
+      "name": "AI_API_KEY",
+      "description": "API key for the AI gateway used for chat and image generation. Replace with your provider's key (OpenAI, Google AI, or any OpenAI-compatible endpoint).",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": true
+    },
+    {
+      "name": "AI_GATEWAY_URL",
+      "description": "Chat completions endpoint URL. Defaults to https://api.openai.com/v1/chat/completions if not set.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "AI_IMAGES_URL",
+      "description": "Image generations endpoint URL. Defaults to https://api.openai.com/v1/images/generations if not set.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "CRON_SECRET",
+      "description": "Shared secret for authenticating cron job requests. A placeholder is generated for dev.",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": true
+    }
+  ]
+}

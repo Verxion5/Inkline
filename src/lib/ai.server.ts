@@ -1,4 +1,4 @@
-const GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const GATEWAY = process.env["AI_GATEWAY_URL"] || "https://api.openai.com/v1/chat/completions";
 
 export class AIError extends Error {
   status: number;
@@ -9,7 +9,7 @@ export class AIError extends Error {
 }
 
 export function hasKey(): boolean {
-  return Boolean(process.env["LOVABLE_API_KEY"]);
+  return Boolean(process.env["AI_API_KEY"]);
 }
 
 /** Multimodal content part for chat completions (text or image). */
@@ -21,7 +21,7 @@ export async function chatJSON<T>(
   user: string | ContentPart[],
   model = "google/gemini-3.7-flash",
 ): Promise<T> {
-  const key = process.env["LOVABLE_API_KEY"];
+  const key = process.env["AI_API_KEY"];
   if (!key) throw new AIError("AI is not configured for this workspace (missing API key).", 401);
 
   const res = await fetch(GATEWAY, {

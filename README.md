@@ -1,24 +1,26 @@
 # Inkline
 
-create this
-
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/dcf5711d-df2f-4328-8228-869c07ac5382).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+An AI creative OS for manga and manhwa — describe a story, and Inkline plans panels, casts characters, and draws original artwork.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+You need Node.js and Bun — [install Bun](https://bun.sh/).
 
 ```sh
 git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+cd <this-repository-name>
+bun install
+bun run dev
 ```
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase anon/publishable key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-side admin ops) |
+| `AI_API_KEY` | API key for the AI gateway (chat + image generation) |
+| `AI_GATEWAY_URL` | Chat completions endpoint (default: `https://api.openai.com/v1/chat/completions`) |
+| `AI_IMAGES_URL` | Image generations endpoint (default: `https://api.openai.com/v1/images/generations`) |
+| `CRON_SECRET` | Shared secret for authenticating cron job requests |
