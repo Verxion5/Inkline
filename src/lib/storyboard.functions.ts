@@ -90,7 +90,6 @@ Respond with JSON matching exactly:
 "location":{"name":string,"description":string,"architecture":string,"lighting":string,"weather":string,"keyObjects":string[]},
 "panels":[{"index":number,"shot":string,"cameraPosition":string,"lens":string,"focalSubject":string,"depth":string,"bubbleSpace":string,"actionDirection":string,"action":string,"emotion":string,"expression":string,"pose":string,"characters":string[],"dialogue":string,"sfx":string}]}
 "continuity" is one sentence of facts that must hold across all panels (time of day, weather, injuries, held objects).`,
-        "google/gemini-3.7-flash",
       );
       return Output.parse(raw);
     } catch (e) {

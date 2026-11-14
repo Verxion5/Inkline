@@ -1,7 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { AIError, chatJSON } from "./ai.server";
-import { VISION_MODEL } from "./imageProvider.server";
+import { AIError, chatJSON, visionModel } from "./ai.server";
 
 const ReviewOut = z.object({
   score: z.number().min(0).max(10),
@@ -43,7 +42,7 @@ Respond with JSON only: {"score":number,"verdict":"accept"|"refine","issues":str
           { type: "text", text: `Panel brief:\n${data.brief}` },
           { type: "image_url", image_url: { url: data.image } },
         ],
-        VISION_MODEL,
+        visionModel(),
       );
       return ReviewOut.parse(raw);
     } catch (e) {
