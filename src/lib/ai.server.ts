@@ -1,4 +1,14 @@
-const GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
+/**
+ * Server-side AI client for any OpenAI-compatible provider.
+ *
+ * Configured entirely from the server environment (never the client bundle):
+ *   AI_API_KEY     — required; the provider key
+ *   AI_BASE_URL    — optional; defaults to https://api.openai.com/v1
+ *   AI_TEXT_MODEL  — optional; default chat/completions model
+ */
+
+const DEFAULT_BASE_URL = "https://api.openai.com/v1";
+const DEFAULT_TEXT_MODEL = "gpt-4o-mini";
 
 export class AIError extends Error {
   status: number;
@@ -8,42 +18,71 @@ export class AIError extends Error {
   }
 }
 
+export function apiKey(): string | undefined {
+  const key = process.env["AI_API_KEY"];
+  return key && key.trim() ? key.trim() : undefined;
+}
+
+/** Provider root, without a trailing slash (e.g. https://api.openai.com/v1). */
+export function apiBaseUrl(): string {
+  const configured = process.env["AI_BASE_URL"]?.trim() || DEFAULT_BASE_URL;
+  return configured.replace(/\/+$/, "");
+}
+
+export function textModel(): string {
+  return process.env["AI_TEXT_MODEL"]?.trim() || DEFAULT_TEXT_MODEL;
+}
+
 export function hasKey(): boolean {
-  return Boolean(process.env["LOVABLE_API_KEY"]);
+  return Boolean(apiKey());
 }
 
 /** Multimodal content part for chat completions (text or image). */
-export type ContentPart = { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
+export type ContentPart =
+  | { type: "text"; text: string }
+  | { type: "image_url"; image_url: { url: string } };
 
-/** Calls the gateway and returns parsed JSON content. `user` may be plain text or multimodal parts. */
+/** Calls the provider's chat completions endpoint and returns parsed JSON content. */
 export async function chatJSON<T>(
   system: string,
   user: string | ContentPart[],
-  model = "google/gemini-3.7-flash",
+  model = textModel(),
 ): Promise<T> {
-  const key = process.env["LOVABLE_API_KEY"];
-  if (!key) throw new AIError("AI is not configured for this workspace (missing API key).", 401);
+  const key = apiKey();
+  if (!key) {
+    throw new AIError("AI is not configured. Set AI_API_KEY in the server environment.", 401);
+  }
 
-  const res = await fetch(GATEWAY, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: user },
-      ],
-      response_format: { type: "json_object" },
-    }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${apiBaseUrl()}/chat/completions`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ],
+        response_format: { type: "json_object" },
+      }),
+    });
+  } catch {
+    throw new AIError(
+      `Could not reach the AI provider at ${apiBaseUrl()}. Check AI_BASE_URL.`,
+      502,
+    );
+  }
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
+    if (res.status === 401)
+      throw new AIError("The AI provider rejected the API key. Check AI_API_KEY.", 401);
     if (res.status === 429) throw new AIError("Rate limited. Try again in a moment.", 429);
     if (res.status === 402)
-      throw new AIError("AI credits are exhausted for this workspace. Add credits to continue.", 402);
-    if (res.status === 403) throw new AIError("AI access is blocked for this workspace.", 403);
-    throw new AIError(`AI gateway error (${res.status}): ${text.slice(0, 300)}`, res.status);
+      throw new AIError("AI credits are exhausted for this API key. Add credits to continue.", 402);
+    if (res.status === 403) throw new AIError("AI access is blocked for this API key.", 403);
+    throw new AIError(`AI provider error (${res.status}): ${text.slice(0, 300)}`, res.status);
   }
 
   const json = (await res.json()) as { choices?: { message?: { content?: string } }[] };

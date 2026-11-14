@@ -26,6 +26,16 @@ export async function streamImage(
     throw new Error((await res.text().catch(() => "")).slice(0, 240) || `Image generation failed (${res.status}).`);
   }
 
+  // Providers without streamed image events answer with one JSON body.
+  const contentType = res.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    const json = (await res.json()) as { data?: { b64_json?: string }[] };
+    const b64 = json.data?.[0]?.b64_json;
+    if (!b64) throw new Error("Image generation returned no image.");
+    onFrame(`data:image/png;base64,${b64}`, true);
+    return;
+  }
+
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
