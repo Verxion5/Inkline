@@ -1,24 +1,46 @@
 # Inkline
 
-create this
+An AI creative OS for manga and manhwa: describe a series and Inkline builds the story genome,
+the cast, the world, the chapters and the artwork — and remembers all of it between sessions.
 
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/dcf5711d-df2f-4328-8228-869c07ac5382).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+Built with TanStack Start (React 19 + SSR), Vite, Tailwind CSS and Supabase.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Requires [Bun](https://bun.sh) (or Node.js + npm).
 
 ```sh
 git clone <this-repository-url>
 cd <repository-name>
-npm i
-npm run dev
+bun install
+bun run dev
 ```
+
+The dev server listens on http://localhost:5173.
+
+```sh
+bun run build     # production build (Nitro server output in dist/)
+bun run lint
+```
+
+## Environment
+
+Client/SSR Supabase configuration (see `.env`):
+
+| Variable | Purpose |
+| --- | --- |
+| `SUPABASE_URL` / `VITE_SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_PUBLISHABLE_KEY` / `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase anon/publishable key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only key for admin operations |
+
+AI features run against any OpenAI-compatible API and read their configuration server-side only:
+
+| Variable | Purpose |
+| --- | --- |
+| `AI_API_KEY` | Provider API key (required for AI features) |
+| `AI_BASE_URL` | API root, default `https://api.openai.com/v1` |
+| `AI_TEXT_MODEL` | Chat/JSON model, default `gpt-4o-mini` |
+| `AI_VISION_MODEL` | Panel review model, default = `AI_TEXT_MODEL` |
+| `AI_IMAGE_MODEL` | Artwork model, default `gpt-image-1` |
+| `AI_IMAGE_SIZE` | Optional fixed size override for artwork |
+| `CRON_SECRET` / `CRON_SECRET_PREVIOUS` | Bearer secret checked by cron-triggered routes |
